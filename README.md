@@ -22,6 +22,10 @@ epiDeep requires the following tools to be available in the `PATH`:
 
 For python3, make sure you have the following packages installed: csv, numpy, json, subprocess, pandas, itertools, matplotlib
 
+## Documentation
+
+Please follows our beginner's guide using the test package [here](https://github.com/donalday/epiDeep/blob/master/Documentation).
+
 ## Credits
 
 epiDeep was written by Donald, Wan Kin Au Yeung at [Division of Epigenomics and Development, Medical Institute of Bioregulation, Kyushu University, Japan](http://www.bioreg.kyushu-u.ac.jp/labo/epigenome/index_e.html). This work was supported by JSPS KAKENHI grant to Hiroyuki Sasaki ([JP18H05214](https://kaken.nii.ac.jp/en/grant/KAKENHI-PROJECT-18H05214/)).
