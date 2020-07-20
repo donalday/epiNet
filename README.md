@@ -20,7 +20,7 @@ epiDeep requires the following tools to be available in the `PATH`:
 * [Keras (not tf.keras)](https://keras.io) (developed on 2.2.4)
 * [IGVTools](http://software.broadinstitute.org/software/igv/igvtools_commandline) (developed on 2.3.67)
 
-For python3, make sure you have the following packages installed: csv, numpy, json, subprocess, pandas, itertools, matplotlib
+For python3, make sure you have the following packages installed: csv, numpy, json, subprocess, pandas, itertools, and matplotlib.
 
 ## Documentation
 
