@@ -34,14 +34,14 @@ feature_max = [100, 1] # Maximum values of each feature in the outpur bedGraph f
 all_bin_bedFile = '../raw_data_files/mm10_50kb_nostep.bed' # Bed file containing all genomic bins
 nearby = '../raw_data_files/mm10_bin_start_50000bp_5step.txt' # Tab-delimited table containing start position of all nearby bins
 ```
-`data_process.py` takes up both input (WT_H3K36me3_FGO_Xu_50000.bedGraph) and output (WT_CG_FGO_Shirane_50000.bedGraph) bedGraph files from the raw_data_files and converts them into numpy arrays.
-All available bin coordinates of a genome (mm10_50kb_nostep.bed) can beeasily created using `bedtools makewindow` command.
-In addition, a tab-delimited file containing all zero-based start positions of nearby bins is required (mm10_bin_start_50000bp_5step.txt). For example, `chr1    250000  0       50000   100000  150000  200000  300000  350000  400000  450000  500000` means bins surrounding chr1:250,000-300,000 starts from 50,000 to 500,000.
+**data_process.py** takes up both input (**WT_H3K36me3_FGO_Xu_50000.bedGraph**) and output (**WT_CG_FGO_Shirane_50000.bedGraph**) bedGraph files from the raw_data_files folder and converts them into numpy arrays.
+All available bin coordinates of a genome (**mm10_50kb_nostep.bed**) can be easily created using [bedtools makewindow](https://bedtools.readthedocs.io/en/latest/index.html#) command.
+In addition, a tab-delimited file containing all zero-based start positions of nearby bins is required (**mm10_bin_start_50000bp_5step.txt**). For example, `chr1    250000  0       50000   100000  150000  200000  300000  350000  400000  450000  500000` means bins surrounding chr1:250,000-300,000 starts from 50,000 to 500,000.
 
 Furthermore, for each input and output feature, data will be scaled to (0,1).
 For output CG methylation levels, the original data is in range 0-100. So upperlimit is known.
 For input H3K36me3 ChIP-seq FPKM values, this script scales the data with 0.95 equals to 95% percentile of all FPKM values.
-Feeding `feature_upperlimit` with zero value will initiate determination of upperlimit. You can resuse from a previous processing output (saved_feature_upperlimit.npy).
+Feeding feature_upperlimit with zero value will initiate determination of upperlimit. You can resuse from a previous processing output (**saved_feature_upperlimit.npy**).
 If you have different samples for training and prediction (like widltype and mutant/knockout/...), you can apply data scaling before upperlimit determination.
 
 When everything is ready, run the data processing using the script:
