@@ -24,7 +24,7 @@ For python3, make sure you have the following packages installed: csv, numpy, js
 
 ## Credits
 
-epiDeep was written by Donald, Wan Kin Au Yeung at [Divsion of Epigenomics and Development, Medical Institute of Bioregulation, Kyushu University, Japan](http://www.bioreg.kyushu-u.ac.jp/labo/epigenome/index_e.html). This work was supported by JSPS KAKENHI grant to Hiroyuki Sasaki (JP18H05214).
+epiDeep was written by Donald, Wan Kin Au Yeung at [Division of Epigenomics and Development, Medical Institute of Bioregulation, Kyushu University, Japan](http://www.bioreg.kyushu-u.ac.jp/labo/epigenome/index_e.html). This work was supported by JSPS KAKENHI grant to Hiroyuki Sasaki ([JP18H05214](https://kaken.nii.ac.jp/ja/grant/KAKENHI-PROJECT-18H05214/)).
 
 ## Citation
 
