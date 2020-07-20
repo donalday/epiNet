@@ -34,14 +34,14 @@ feature_max = [100, 1] # Maximum values of each feature in the outpur bedGraph f
 all_bin_bedFile = '../raw_data_files/mm10_50kb_nostep.bed' # Bed file containing all genomic bins
 nearby = '../raw_data_files/mm10_bin_start_50000bp_5step.txt' # Tab-delimited table containing start position of all nearby bins
 ```
-**data_process.py** takes up both input (**WT_H3K36me3_FGO_Xu_50000.bedGraph**) and output (**WT_CG_FGO_Shirane_50000.bedGraph**) bedGraph files from the raw_data_files folder and converts them into numpy arrays.
+**data_process.py** takes up both input (**WT_H3K36me3_FGO_Xu_50000.bedGraph**) and output (**WT_CG_FGO_Shirane_50000.bedGraph**) bedGraph files from the raw_data_files folder and converts them into a single numpy array.
 All available bin coordinates of a genome (**mm10_50kb_nostep.bed**) can be easily created using [bedtools makewindow](https://bedtools.readthedocs.io/en/latest/index.html#) command.
 In addition, a tab-delimited file containing all zero-based start positions of nearby bins is required (**mm10_bin_start_50000bp_5step.txt**). For example, `chr1    250000  0       50000   100000  150000  200000  300000  350000  400000  450000  500000` means bins surrounding chr1:250,000-300,000 starts from 50,000 to 500,000.
 
 Furthermore, for each input and output feature, data will be scaled between 0 and 1.
 For output CG methylation levels, the original data is in range 0 to 100. So upperlimit is known.
 For input H3K36me3 ChIP-seq FPKM values, this script scales the data with 0.95 equals to 95% percentile of all FPKM values.
-Feeding feature_upperlimit with zero value will initiate determination of upperlimit. You can resuse from a previous processing output (**saved_feature_upperlimit.npy**).
+Feeding `feature_upperlimit` with zero value will initiate determination of upperlimit. You can resuse from a previous processing output (**saved_feature_upperlimit.npy**).
 If you have different samples for training and prediction (like widltype and mutant/knockout/...), you can apply data scaling before upperlimit determination.
 
 When everything is ready, run the data processing using the script:
@@ -49,9 +49,40 @@ When everything is ready, run the data processing using the script:
 python data_process.py
 ```
 
+After data processing, there will be a data array (**saved_input_in_np.npy**), feature properties (**saved_feature_name.npy**,**saved_feature_upperlimit.npy**,**saved_feature_max.npy**), scaled bedGraph files (**WT_K36me3_50000_ori.bedGraph**,**WT_CG_50000_ori.bedGraph**) and their respective tdf files for IGV visualization.
 
 ## Step 2: Model training
 
+Please modify the header of epiDeep_training.py for your own data (Default are the values of the test run).
+```
+no_of_threads = 8 # No. of threads available (not CPU cores)
+learning_rate = 0.0001 # Learning rate for Nadam
+max_epochs = 9999 # Maximum no. of epochs to try even not pleateau yet
+stop_point = 20 # No. of cycles to stop when no more reduction in loss seen (Early stopping)
+batch_size = 100 #  Batch size
+filter_size = 64 # Filter size of the third layer, filter sizes of other layers will be scaled accordingly
+
+model_file = '../epiDeep_model.py' # The epiDeep model
+all_bin_bedFile = '../raw_data_files/mm10_50kb_nostep.bed' # Bed file containing all genomic bins
+input_folder = '../data_processing' # Folder containing of processed data files
+feature_name = ['WT_CG', 'WT_K36me3'] # Name of output and input features for training (Exact name used during data processing)
+feature_for_training = [2] # List of fearure(s) for training (1-based order of feature during data processing)
+feature_for_prediction = [1] # List of fearure for prediction (1-based order of feature during data processing)
+chr_list = ['chr1', 'chr2', 'chr3', 'chr4', 'chr5', 'chr6', 'chr7', 'chr8', 'chr9', 'chr10', 'chr11', 'chr12', 'chr13', 'chr14', 'chr15', 'chr16', 'chr17', 'chr18', 'chr19', 'chrX'] # Desired order of chromosomes, the 1st entry will be used for testing, the 2nd and 3rd will be used for validation, and others will be used for training
+```
+
+The lower half specifies the path of epiDeep model files (**epiDeep_model.py**) and the data processing folder. The training will split the dataset based on chromosomes for training, validation and testing. The first entry in the `chr_list` will be used for testing, the second and third entries will be used for validation, and others will be used for training. Copy all other parameters **as EXACTLY as stated in data_process.py**.
+
+The upper half specifies the training parameters. We recommend the above learning rate and batch size at a starting point. Do yourself a grid search if you want to further optimize. These parameters work on own hands for mouse genomes at 1-kb, 10-kb and 50-kb resolutions.
+
+When everything is ready, start the training using the script:
+```
+python epiDeep_training.py
+```
+
+After training, there will be a **training_all_corrcoef_table.txt** to summarize the results from all combinations of input features (In the test run, there is only one though). You can find individual training results (numpy arrays and pdf graphs). For example, the only input feature of test run (training_1fea_2*), where 1fea and 2 mean the number of input features used for this combination and the features (specified in `feature_for_training`).
+
+After running, there will be a data array (**saved_input_in_np.npy**), feature properties (**saved_feature_name.npy**,**saved_feature_upperlimit.npy**,**saved_feature_max.npy**), scaled bedGraph files (**WT_K36me3_50000_ori.bedGraph**,**WT_CG_50000_ori.bedGraph**) and their respective tdf files for IGV visualization.
 
 
 ## Step 3: Output prediction
