@@ -40,12 +40,14 @@ In addition, a tab-delimited file containing all zero-based start positions of n
 
 Furthermore, for each input and output feature, data will be scaled to (0,1).
 For output CG methylation levels, the original data is in range 0-100. So upperlimit is known.
-For input H3K36me3 ChIP-seq FPKM values, data_process.py scales the data with 0.95 equals to 95% percentile of all FPKM values.
+For input H3K36me3 ChIP-seq FPKM values, this script scales the data with 0.95 equals to 95% percentile of all FPKM values.
 Feeding `feature_upperlimit` with zero value will initiate determination of upperlimit. You can resuse from a previous processing output (saved_feature_upperlimit.npy).
 If you have different samples for training and prediction (like widltype and mutant/knockout/...), you can apply data scaling before upperlimit determination.
 
 When everything is ready, run the data processing using the script:
-`python data_process.py`
+```
+python data_process.py
+```
 
 
 ## Step 2: Model training
