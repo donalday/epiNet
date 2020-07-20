@@ -28,7 +28,7 @@ epiDeep was written by Donald, Wan Kin Au Yeung at [Divsion of Epigenomics and D
 
 ## Citation
 
-Please cite 'Deep learning captures epigenetic crosstalk associated with CG methylation' (in preparation).
+Please cite 'Deep learning captures epigenetic crosstalk associated with CG methylation' (Au Yeung et al., in preparation).
 
 ## Licences
 
