@@ -1,6 +1,6 @@
 # Documentation of the script-test-package
 
-The following is a package containing both scripts and test run data, to predict CG methylation levels from H3K36me3 FPKM values in wildtype mouse oocytes at 50-kb resolution. Run the scripts according the documentation and modify for your own research/usage.
+The following is a package containing both scripts and test run data, to predict CG methylation levels from H3K36me3 FPKM values in wildtype mouse oocytes at 50-kb resolution. Perform the test run according the documentation below and modify for your own research/usage.
 
 ## Folder structure
 
