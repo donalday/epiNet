@@ -24,7 +24,7 @@ For python3, make sure you have the following packages installed: csv, numpy, js
 
 ## Documentation
 
-Please follows our beginner's guide using the test package [here](https://github.com/donalday/epiDeep/blob/master/Documentation).
+Please follows our beginner's guide using the test package [here](https://github.com/donalday/epiDeep/blob/master/Documentation.md).
 
 ## Credits
 
