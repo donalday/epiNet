@@ -1,8 +1,8 @@
-# Documentation
+# Documentation of the script-test-package
 
 The following is a package containing both scripts and test run data, to predict CG methylation levels from H3K36me3 FPKM values in wildtype mouse oocytes at 50-kb resolution. Run the scripts according the documentation and modify for your own research/usage.
 
-## Structure of the script-test-package
+## Folder structure
 
 ```
 -- Parent folder
@@ -20,7 +20,7 @@ The following is a package containing both scripts and test run data, to predict
    |-- WT_H3K36me3_FGO_Xu_50000.bedGraph
 ```
 
-## Step 1: Data processing
+## Step 1:  Data processing
 
 Please modify the header of **data_process.py** for your own data (Default are the values of the test run).
 ```
@@ -51,7 +51,7 @@ python data_process.py
 
 After data processing, there will be a data array (**saved_input_in_np.npy**), feature properties (**saved_feature_name.npy**,**saved_feature_upperlimit.npy**,**saved_feature_max.npy**), scaled bedGraph files (**WT_K36me3_50000_ori.bedGraph**,**WT_CG_50000_ori.bedGraph**) and their respective tdf files for IGV visualization.
 
-## Step 2: Model training
+## Step 2:  Model training
 
 Please modify the header of **epiDeep_training.py** for your own data (Default are the values of the test run).
 ```
@@ -85,7 +85,7 @@ After training, there will be a **all_corrcoef_table.txt** to summarize the resu
 After running, there will be a data array (**saved_input_in_np.npy**), feature properties (**saved_feature_name.npy**,**saved_feature_upperlimit.npy**,**saved_feature_max.npy**), scaled bedGraph files (**WT_K36me3_50000_ori.bedGraph**,**WT_CG_50000_ori.bedGraph**) and their respective tdf files for IGV visualization.
 
 
-## Step 3: Output prediction
+## Step 3:  Output prediction
 
 Please modify the header of **epiDeep_prediction.py** for your own data (Default are the values of the test run).
 ```
