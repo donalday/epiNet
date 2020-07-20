@@ -21,3 +21,15 @@ epiDeep requires the following tools to be available in the `PATH`:
 * [IGVTools](http://software.broadinstitute.org/software/igv/igvtools_commandline) (developed on 2.3.67)
 
 For python3, make sure you have the following packages installed: csv, numpy, json, subprocess, pandas, itertools, matplotlib
+
+## Credits
+
+epiDeep was written by Donald, Wan Kin Au Yeung at [Divsion of Epigenomics and Development, Medical Institute of Bioregulation, Kyushu University, Japan](http://www.bioreg.kyushu-u.ac.jp/labo/epigenome/index_e.html). This work was supported by JSPS KAKENHI grant to Hiroyuki Sasaki (JP18H05214).
+
+## Citation
+
+Please cite 'Deep learning captures epigenetic crosstalk associated with CG methylation' (in preparation).
+
+## Licences
+
+epiDeep is free, licenced under GNU General Public License v3.0.
