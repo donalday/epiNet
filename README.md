@@ -15,9 +15,9 @@ epiDeep is a convolutional neural network (CNN)-based regression model to predic
 epiDeep is written in python and is executed from the command line. The package is installation-free. Just download the script-test-package folder. The folder contains both scripts and test run data. Perform the test run according the documentation and modify for your own research/usage.
 
 epiDeep requires mainly the following tools to be installed and be available in the `PATH`:
-* [python3](https://www.python.org/downloads/release/python-368/) (developed on 3.6.8)
-* [Tensorflow v1](https://www.tensorflow.org) (developed on 1.14.0)
-* [Keras (not tf.keras)](https://keras.io) (developed on 2.2.4)
+* [python3](https://www.python.org/downloads/release/python-368/) (developed on 3.6.8, 3.6.10)
+* [Tensorflow v1](https://www.tensorflow.org) (developed on 1.14.0, 1.15.0)
+* [Keras (not tf.keras)](https://keras.io) (developed on 2.2.4, 2.2.5)
 * [IGVTools](http://software.broadinstitute.org/software/igv/igvtools_commandline) (developed on 2.3.67)
 
 For python3, make sure you have the following packages installed: csv, numpy, json, subprocess, pandas, itertools, and matplotlib.
