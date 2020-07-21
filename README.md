@@ -4,7 +4,7 @@ epiDeep is a convolutional neural network (CNN)-based regression model to predic
 
 ## Main features of epiDeep
 
-* Datasets implemented as standard [bedGraph](https://genome.ucsc.edu/goldenPath/help/bedgraph.html) formats, handling mean CG methylation levels and FPKM values of epigenetic modifications with a defined bin size (for example, 50 kb)
+* Standard [bedGraph](https://genome.ucsc.edu/goldenPath/help/bedgraph.html) input formats, handling mean CG methylation levels and FPKM values of epigenetic modifications with a defined bin size (for example, 50-kb)
 * Single script to handle all raw input and output data processing
 * Felxibility in number of input and output features
 * Outputs of training and prediction are visualization-friendly with genome browser like [IGV](http://software.broadinstitute.org/software/igv/)
@@ -24,7 +24,7 @@ For python3, make sure you have the following packages installed: csv, numpy, js
 
 ## Documentation
 
-Please follows our beginner's guide [here](https://github.com/donalday/epiDeep/blob/master/Documentation.md).
+Please follows the beginner's guide [here](https://github.com/donalday/epiDeep/blob/master/Documentation.md).
 
 ## Credits
 
@@ -32,7 +32,7 @@ epiDeep was written by Donald, Wan Kin Au Yeung at [Division of Epigenomics and 
 
 ## Citation
 
-Please cite 'Deep learning captures epigenetic crosstalk associated with CG methylation' (Au Yeung et al., in preparation).
+Au Yeung et al., in preparation
 
 ## Licences
 
