@@ -36,4 +36,4 @@ Au Yeung et al., in preparation
 
 ## Licences
 
-epiDeep is free, licenced under GNU General Public License v3.0.
+epiDeep is free, licensed under GNU General Public License v3.0.
