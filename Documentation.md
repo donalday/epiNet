@@ -66,14 +66,14 @@ model_file = '../epiDeep_model.py' # The epiDeep model
 all_bin_bedFile = '../raw_data_files/mm10_50kb_nostep.bed' # Bed file containing all genomic bins
 input_folder = '../data_processing' # Folder containing of processed data files
 feature_name = ['WT_CG', 'WT_K36me3'] # Name of output and input features for training (Exact name used during data processing)
-feature_for_training = [2] # List of fearure(s) for training (1-based order of feature during data processing)
-feature_for_prediction = [1] # List of fearure for prediction (1-based order of feature during data processing)
+feature_of_input = [2] # List of input fearure(s) (1-based order of feature during data processing)
+feature_of_output = [1] # List of output fearure (1-based order of feature during data processing)
 chr_list = ['chr1', 'chr2', 'chr3', 'chr4', 'chr5', 'chr6', 'chr7', 'chr8', 'chr9', 'chr10', 'chr11', 'chr12', 'chr13', 'chr14', 'chr15', 'chr16', 'chr17', 'chr18', 'chr19', 'chrX'] # Desired order of chromosomes, the 1st entry will be used for testing, the 2nd and 3rd will be used for validation, and others will be used for training
 ```
 
 The lower half specifies the path of epiDeep model files (**epiDeep_model.py**) and the data processing folder. The training will split the dataset based on chromosomes for training, validation and testing. The first entry in the `chr_list` will be used for testing, the second and third entries will be used for validation, and others will be used for training. Copy all other parameters **as EXACTLY as stated in data_process.py**.
 
-The upper half specifies the training parameters. We recommend the above learning rate and batch size at a starting point. Do yourself a grid search if you want to further optimize. These parameters work on own hands for mouse genomes at 1-kb, 10-kb and 50-kb resolutions.
+The upper half specifies the training parameters. We recommend the above learning rate and batch size at a starting point. Do yourself a grid search if you want to further optimize. These parameters work on own hands for the mouse genome at 1-kb, 10-kb and 50-kb resolutions.
 
 When everything is ready, start the training using the script:
 ```
@@ -107,8 +107,8 @@ filter_size = 64 # Filter size of the third layer, filter sizes of other layers 
 
 model_file = '../epiDeep_model.py' # The epiDeep model
 all_bin_bedFile = '../raw_data_files/mm10_50kb_nostep.bed' # Bed file containing all genomic bins
-feature_for_training = [2] # List of fearure(s) for training (1-based order of feature during data processing)
-feature_for_prediction = [1] # List of fearure for prediction (1-based order of feature during data processing)
+feature_of_input = [2] # List of input fearure(s) (1-based order of feature during data processing)
+feature_of_output = [1] # List of output fearure (1-based order of feature during data processing)
 chr_list = ['chr1', 'chr2', 'chr3', 'chr4', 'chr5', 'chr6', 'chr7', 'chr8', 'chr9', 'chr10', 'chr11', 'chr12', 'chr13', 'chr14', 'chr15', 'chr16', 'chr17', 'chr18', 'chr19', 'chrX'] # Desired order of chromosomes, the 1st entry will be used for testing, the 2nd and 3rd will be used for validation, and others will be used for training
 ```
 Copy the above parameters **as EXACTLY as stated in epiDeep_training.py**.
