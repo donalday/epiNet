@@ -7,26 +7,32 @@ import os
 run_name = os.path.basename(os.getcwd())
 
 
-## Limit CPU thread use
-## inter_op_parallelism_threads: controls the maximum parallel speedup for a single operation (e.g. matrix duplication)
-## intra_op_parallelism_threads: multithreaded implementation (e.g. independent in your TensorFlow graph)
-
-import tensorflow
-config = tensorflow.compat.v1.ConfigProto(intra_op_parallelism_threads=no_of_threads,inter_op_parallelism_threads=no_of_threads)
-session = tensorflow.compat.v1.Session(config=config)
-
-
 ## Common modules, functions, variables
 
 import csv
 import json
 import numpy as np
+import tensorflow
 import keras
 from keras import layers
 from keras import backend as K
 from keras.models import Model
 from sklearn.linear_model import LinearRegression
+from keras.utils import Sequence
 import gc
+import math
+
+
+## Set CPU and GPU usage
+if no_of_gpu >= 1:
+    tf_config = tensorflow.compat.v1.ConfigProto(allow_soft_placement=False)
+    tf_config.gpu_options.allow_growth=True
+    session = tensorflow.compat.v1.Session(config=tf_config)
+    K.set_session(session)
+else:
+    tf_config = tensorflow.compat.v1.ConfigProto(intra_op_parallelism_threads=no_of_threads,inter_op_parallelism_threads=no_of_threads)
+    session = tensorflow.compat.v1.Session(config=tf_config)
+    K.set_session(session)
 
 
 ## Load processed input data
@@ -134,5 +140,25 @@ array_output = array_output.reshape(array_output.shape[0], array_output.shape[1]
 
 filepath = "saved-model-epoch{epoch:05d}.h5" # Change model name every save
 callbacks_list = [keras.callbacks.ModelCheckpoint(filepath, monitor='val_loss', save_best_only=False, save_weights_only=True, mode='auto', period=1), keras.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=2), keras.callbacks.EarlyStopping(monitor='val_loss', mode='auto', verbose=1, patience=stop_point)] # With EarlyStopping
+
+
+## Load sequence model to speed up training
+
+class CNN_train(Sequence):
+    def  __init__(self, batch_size, x_whole, y_whole):
+        self.batch_size, self.x, self.y = batch_size, x_whole, y_whole
+        self.no_of_batch = math.ceil(self.x.shape[0]/self.batch_size)
+        if self.x.shape[0] != self.y.shape[0]:
+            print('Input and output data are not of equal length. Terminate.')
+            exit()
+    def __len__(self):
+        return self.no_of_batch
+    def __getitem__(self, idx):
+        this_end = (idx+1) * self.batch_size
+        this_batch_size = self.batch_size
+        if this_end > self.x.shape[0]:
+            this_end = self.x.shape[0]
+            this_batch_size = self.x.shape[0] - (idx * self.batch_size)
+        return (self.x[(idx * self.batch_size):this_end], self.y[(idx * self.batch_size):this_end])
 
 

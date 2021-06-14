@@ -4,6 +4,7 @@
 ## Global parameters
 
 no_of_threads = 8 # No. of threads available (not CPU cores)
+no_of_gpu = 1 # Number of GPU installed (default 1 or 0)
 
 training_folder = '../training' # Folder containing training results
 input_folder = '../data_processing' # Folder containing of processed data files for prediction
@@ -19,6 +20,7 @@ batch_size = 100 #  Batch size
 filter_size = 64 # Filter size of the third layer, filter sizes of other layers will be scaled accordingly
 
 model_file = '../epiNet_model.py' # The epiNet model
+species = 'mm10' # Genome assembly of the species, or .chrom.size for unsupported genomes
 all_bin_bedFile = '../raw_data_files/mm10_50kb_nostep.bed' # Bed file containing all genomic bins
 feature_of_input = [2] # List of input fearure(s) (1-based order of feature during data processing)
 feature_of_output = [1] # List of output fearure (1-based order of feature during data processing)
@@ -131,7 +133,7 @@ iterate_count = 0
 while iterate_count < len(all_bedGraph_list):
     command_to_run1 = nullseparator.join(['sort -k 1,1 -k 2,2n -o temp.bedGraph ', all_bedGraph_list[iterate_count]])
     out_name = all_bedGraph_list[iterate_count].split('.bedGraph')[0]
-    command_to_run2 = nullseparator.join(['igvtools toTDF -z 10 temp.bedGraph ', out_name, '_z10.tdf mm10'])
+    command_to_run2 = nullseparator.join(['igvtools toTDF -z 10 temp.bedGraph ', out_name, '_z10.tdf ', species])
     command_to_run3 = 'rm temp.bedGraph'
     subprocess.call(command_to_run1, shell=True)
     subprocess.call(command_to_run2, shell=True)

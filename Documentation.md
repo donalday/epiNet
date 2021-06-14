@@ -5,7 +5,7 @@ The following is the details for the script-test-package, which contains both sc
 ## Folder structure
 
 ```
-script-test-package
+script-test-package_v2
 ├── epiNet_model.py (epiNet model)
 ├── data_processing (Folder to process raw input and output datasets)
 │   └── data_process.py
@@ -56,6 +56,7 @@ After data processing, there will be a data array (**saved_input_in_np.npy**), f
 Please modify the header of **epiNet_training.py** for your own data (Default are the values of the test run).
 ```
 no_of_threads = 8 # No. of threads available (not CPU cores)
+no_of_gpu = 0 # Number of GPU installed (default 1 or 0)
 learning_rate = 0.0001 # Learning rate for Nadam
 max_epochs = 9999 # Maximum no. of epochs to try even not pleateau yet
 stop_point = 20 # No. of cycles to stop when no more reduction in loss seen (Early stopping)
@@ -63,6 +64,7 @@ batch_size = 100 #  Batch size
 filter_size = 64 # Filter size of the third layer, filter sizes of other layers will be scaled accordingly
 
 model_file = '../epiNet_model.py' # The epiNet model
+species = 'mm10' # Genome assembly of the species, or .chrom.size for unsupported genomes
 all_bin_bedFile = '../raw_data_files/mm10_50kb_nostep.bed' # Bed file containing all genomic bins
 input_folder = '../data_processing' # Folder containing of processed data files
 feature_name = ['WT_CG', 'WT_K36me3'] # Name of output and input features for training (Exact name used during data processing)
@@ -90,6 +92,7 @@ After running, there will be a data array (**saved_input_in_np.npy**), feature p
 Please modify the header of **epiNet_prediction.py** for your own data (Default are the values of the test run).
 ```
 no_of_threads = 8 # No. of threads available (not CPU cores)
+no_of_gpu = 1 # Number of GPU installed (default 1 or 0)
 
 training_folder = '../training' # Folder containing training results
 input_folder = '../data_processing' # Folder containing of processed data files for prediction
@@ -106,6 +109,7 @@ batch_size = 100 #  Batch size
 filter_size = 64 # Filter size of the third layer, filter sizes of other layers will be scaled accordingly
 
 model_file = '../epiNet_model.py' # The epiNet model
+species = 'mm10' # Genome assembly of the species, or .chrom.size for unsupported genomes
 all_bin_bedFile = '../raw_data_files/mm10_50kb_nostep.bed' # Bed file containing all genomic bins
 feature_of_input = [2] # List of input fearure(s) (1-based order of feature during data processing)
 feature_of_output = [1] # List of output fearure (1-based order of feature during data processing)

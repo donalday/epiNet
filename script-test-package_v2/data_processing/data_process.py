@@ -10,6 +10,7 @@ feature_data_scaling = [1, 1] # Data scaling before upperlimit cutoff in the for
 feature_upperlimit = [100, 0] # Upperlimit N. Each feature with range (0, N) will be scaled to (0, 1). If N = 0, N will be determined during processing (N assigned as 95th percentile value).
 feature_max = [100, 1] # Maximum values of each feature in the outpur bedGraph file(s) (eventhough currently input files are not processed)
 
+species = 'mm10' # Genome assembly of the species, or .chrom.size for unsupported genomes
 all_bin_bedFile = '../raw_data_files/mm10_50kb_nostep.bed' # Bed file containing all genomic bins
 nearby = '../raw_data_files/mm10_bin_start_50000bp_5step.txt' # Tab-delimited table containing start position of all nearby bins
 
@@ -196,7 +197,7 @@ curr_f_count = 0
 nullseparator = ''
 while curr_f_count < len(feature_name):
     command_to_run1 = nullseparator.join(['sort -k 1,1 -k 2,2n -o temp.bedGraph ', feature_name[curr_f_count], '_', bin_size, '_ori.bedGraph'])
-    command_to_run2 = nullseparator.join(['igvtools toTDF -z 10 temp.bedGraph ', feature_name[curr_f_count], '_', bin_size, '_ori_z10.tdf', ' mm10'])
+    command_to_run2 = nullseparator.join(['igvtools toTDF -z 10 temp.bedGraph ', feature_name[curr_f_count], '_', bin_size, '_ori_z10.tdf', ' ', species])
     command_to_run3 = 'rm temp.bedGraph'
     subprocess.call(command_to_run1.split())
     subprocess.call(command_to_run2.split())

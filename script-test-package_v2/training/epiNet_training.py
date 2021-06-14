@@ -4,6 +4,7 @@
 ## Global parameters
 
 no_of_threads = 8 # No. of threads available (not CPU cores)
+no_of_gpu = 0 # Number of GPU installed (default 1 or 0)
 learning_rate = 0.0001 # Learning rate for Nadam
 max_epochs = 9999 # Maximum no. of epochs to try even not pleateau yet
 stop_point = 20 # No. of cycles to stop when no more reduction in loss seen (Early stopping)
@@ -11,6 +12,7 @@ batch_size = 100 #  Batch size
 filter_size = 64 # Filter size of the third layer, filter sizes of other layers will be scaled accordingly
 
 model_file = '../epiNet_model.py' # The epiNet model
+species = 'mm10' # Genome assembly of the species, or .chrom.size for unsupported genomes
 all_bin_bedFile = '../raw_data_files/mm10_50kb_nostep.bed' # Bed file containing all genomic bins
 input_folder = '../data_processing' # Folder containing of processed data files
 feature_name = ['WT_CG', 'WT_K36me3'] # Name of output and input features for training (Exact name used during data processing)
@@ -43,10 +45,9 @@ while feature_count > 0:
 print("Total combinations", len(iList_feature_of_input))
 print("")
 #
-trial_for_this_combination = 0 # Check try how many times before confirming this combination is not trainable
-#
 iList_count = 0
 while iList_count < len(iList_feature_of_input):
+    trial_for_this_combination = 0 # Check try how many times before confirming this combination is not trainable
     feature_of_input = iList_feature_of_input[iList_count]
 #    
 ###### Load the model
@@ -77,19 +78,21 @@ while iList_count < len(iList_feature_of_input):
     if iList_count == 0:
         y_test = array_output[chr_start_row[0]:(chr_end_row[0]+1)]
 #
-    history = cnn.fit(x=x_train, y=y_train, shuffle=True, epochs=max_epochs, batch_size=batch_size, callbacks=callbacks_list, validation_data=(x_val, y_val))
+#    history = cnn.fit(x=x_train, y=y_train, shuffle=True, epochs=max_epochs, batch_size=batch_size, callbacks=callbacks_list, validation_data=(x_val, y_val))
+    this_CNN_train = CNN_train(batch_size, x_train, y_train)
+    this_CNN_val = CNN_train(batch_size, x_val, y_val)
+    history = cnn.fit_generator(this_CNN_train, steps_per_epoch=this_CNN_train.no_of_batch, epochs=max_epochs, callbacks=callbacks_list, validation_data=this_CNN_val, validation_steps=this_CNN_val.no_of_batch, max_queue_size=(30*no_of_threads), workers=no_of_threads, use_multiprocessing=True)
 #
 #
-###### Save final model and display curve of loss and accuracy during training
+###### Save final model and display curve of loss and accuracy during training (page 160)
 #
     cycle_trained = len(history.history.get('loss'))
 #
-    if (int(cycle_trained) == int(stop_point+1)) and (trial_for_this_combination < 10): # If no learning at all (probably gradient vanished), restart this training
-        subprocess.call('rm saved-model-epoch*.h5', shell=True) # Remove all saaved models
+    if cycle_trained == stop_point+1: # Remove epoch that did not learn anything
         trial_for_this_combination += 1
-        continue
-    else:
-        trial_for_this_combination = 0
+        if int(subprocess.check_output(['ls -1 saved-model-epoch*.h5 | wc -l'], shell=True).decode('utf-8').splitlines()[0]) > 0:
+            subprocess.call('rm saved-model-epoch*.h5', shell=True) # Remove all saaved models and only leave the last model (saved separately)
+            continue
 #
     open(nullseparator.join([run_name, '_total_training_cycle.txt']), 'w').write(str(cycle_trained)) # Save the number of training cycle before no improvement (Total - patience)
     json.dump(list(history.history.get('loss')), open(nullseparator.join([run_name, '_list_loss.json']), 'w'))
@@ -110,7 +113,7 @@ while iList_count < len(iList_feature_of_input):
     plt.legend()
     plt.show()
     nullseparator = ''
-    loss_name_list = [run_name, '-epiNet-training-loss.pdf']
+    loss_name_list = [run_name, '-epi-cnn-training-loss.pdf']
     a.savefig(nullseparator.join(loss_name_list), bbox_inches='tight')
     plt.cla()
 #
@@ -118,6 +121,7 @@ while iList_count < len(iList_feature_of_input):
 ###### Output preidct epigenetic modifications to bedGraph files (training data, validation data and test data)
 #
     def cal_all_corrcoef(data_input, data_decoded, feature_no, epoch): # Calculate Pearson product-moment correlation coefficient for each feature
+#        print("Pearson product-moment correlation coefficient calculation started") # Debugger
         output = []
         output.append(epoch)
         feature_count = 0
@@ -144,10 +148,13 @@ while iList_count < len(iList_feature_of_input):
 #
     iterate_count = 1
     while iterate_count <= cycle_trained:
+#        print("Epoch", iterate_count) # Debugger
+#        print("") # Debugger
         cnn = Model(input_epi, x)
         model_name_list = ['saved-model-epoch', format(iterate_count, '05d'), '.h5']
         cnn.load_weights(nullseparator.join(model_name_list)) # Keras can only load weights but not model (probably bug?)
         cnn.compile(optimizer=my_optimizer, loss='mse') # Tensorflow deprecated warning
+#        cnn.summary()
         out_bedGraph_temp = [[] for x in range(no_of_feature_to_predict)]
         array_output_predicted = cnn.predict(array_input, batch_size=batch_size)
         y_train_predicted = cnn.predict(x_train, batch_size=batch_size)
@@ -161,12 +168,12 @@ while iList_count < len(iList_feature_of_input):
             while row_count_out < len(array_output):
                 curr_f_count = 0
                 while curr_f_count < no_of_feature_to_predict:
-                    out_bedGraph_temp[curr_f_count].append(all_bin_dict_nearby.get(dict_row_2_genome.get(str(row_count_out))) + [str(feature_max[curr_f_count]*float(array_output_predicted[row_count_out][curr_f_count]))]) # Generate bin table for each feature
+                    out_bedGraph_temp[curr_f_count].append(all_bin_dict_nearby.get(dict_row_2_genome.get(str(row_count_out))) + [str(feature_max[int(feature_of_output[curr_f_count]-1)]*float(array_output_predicted[row_count_out][curr_f_count]))]) # Generate bin table for each feature
                     curr_f_count += 1
                 row_count_out += 1
             curr_f_count = 0
             while curr_f_count < no_of_feature_to_predict:
-                csv.writer(open(nullseparator.join([feature_name[curr_f_count], '_', bin_size, '_', run_name, '_epoch', format(iterate_count, '05d'), '.bedGraph']), 'w', newline="\n"), delimiter='\t').writerows(out_bedGraph_temp[curr_f_count])
+                csv.writer(open(nullseparator.join([feature_name[int(feature_of_output[curr_f_count]-1)], '_', bin_size, '_', run_name, '_epoch', format(iterate_count, '05d'), '.bedGraph']), 'w', newline="\n"), delimiter='\t').writerows(out_bedGraph_temp[curr_f_count])
                 curr_f_count += 1
         iterate_count += 1
 #
@@ -187,9 +194,10 @@ while iList_count < len(iList_feature_of_input):
     plt.title('Training Pearson correlation coefficient')
     plt.legend()
     plt.show()
-    loss_name_list = [run_name, '-epiNet-train_corrcoef.pdf']
+    loss_name_list = [run_name, '-epi-cnn-train_corrcoef.pdf']
     acc1.savefig(nullseparator.join(loss_name_list), bbox_inches='tight')
     plt.cla()
+    del acc1
 #
     acc1 = plt.figure()
     f_count = 1
@@ -199,9 +207,10 @@ while iList_count < len(iList_feature_of_input):
     plt.title('Validation Pearson correlation coefficient')
     plt.legend()
     plt.show()
-    loss_name_list = [run_name, '-epiNet-val_corrcoef.pdf']
+    loss_name_list = [run_name, '-epi-cnn-val_corrcoef.pdf']
     acc1.savefig(nullseparator.join(loss_name_list), bbox_inches='tight')
     plt.cla()
+    del acc1
 #
     acc1 = plt.figure()
     f_count = 1
@@ -211,11 +220,18 @@ while iList_count < len(iList_feature_of_input):
     plt.title('Test Pearson correlation coefficient')
     plt.legend()
     plt.show()
-    loss_name_list = [run_name, '-epiNet-test_corrcoef.pdf']
+    loss_name_list = [run_name, '-epi-cnn-test_corrcoef.pdf']
     acc1.savefig(nullseparator.join(loss_name_list), bbox_inches='tight')
     plt.cla()
+    del acc1
 #
-    iList_count += 1 # End of loop
+    if (np.isnan(test_corrcoef[-1][1:]).any()) and (trial_for_this_combination < stop_point): # If one prediction output did not learn, try again
+        trial_for_this_combination += 1
+    elif (int(cycle_trained) > int(stop_point+1)): # Unless the model learnt nothing, go to next feature
+        iList_count += 1 # End of loop
+#
+    if int(subprocess.check_output(['ls -1 saved-model-epoch*.h5 | wc -l'], shell=True).decode('utf-8').splitlines()[0]) > 0:
+        subprocess.call('rm saved-model-epoch*.h5', shell=True) # Remove all saaved models
 
 
 ## IGVtools converion for converting all bedGraph files to TDF files
@@ -226,7 +242,7 @@ iterate_count = 0
 while iterate_count < len(all_bedGraph_list):
     command_to_run1 = nullseparator.join(['sort -k 1,1 -k 2,2n -o temp.bedGraph ', all_bedGraph_list[iterate_count]])
     out_name = all_bedGraph_list[iterate_count].split('.bedGraph')[0]
-    command_to_run2 = nullseparator.join(['igvtools toTDF -z 10 temp.bedGraph ', out_name, '_z10.tdf mm10'])
+    command_to_run2 = nullseparator.join(['igvtools toTDF -z 10 temp.bedGraph ', out_name, '_z10.tdf ', species])
     command_to_run3 = 'rm temp.bedGraph'
     subprocess.call(command_to_run1, shell=True)
     subprocess.call(command_to_run2, shell=True)
@@ -282,7 +298,12 @@ fname_count2 = 0
 while fname_count2 < len(feature_of_input):
     output_feature_name.append(feature_name[int(feature_of_input[fname_count2]-1)])
     fname_count2 += 1
-output_table.append(['No. of features'] + output_feature_name + ['Total epoch', 'Training R', 'Validation R', 'Testing R'])
+def print_header_with_space(this_R,this_feature_of_output):
+    output = [this_R]
+    for x in range(len(this_feature_of_output)-2):
+        output += ['']
+    return output
+output_table.append(['No. of features'] + output_feature_name + ['Total epoch'] + print_header_with_space('Training R',feature_of_output) + print_header_with_space('Validation R',feature_of_output) + print_header_with_space('Testing R',feature_of_output))
 
 
 ## Load and summarize corrcoef values
@@ -302,7 +323,7 @@ while iList_count < len(iList_feature_of_input):
         this_feature_name[int(feature_of_input[fname_counter]-len(feature_of_output)-1)] = 'O'
         fname_counter += 1
 #
-    output_table.append([int(len(feature_of_input))] + this_feature_name.tolist() + [int(train_corrcoef[-1][0]), train_corrcoef[-1][1], val_corrcoef[-1][1], test_corrcoef[-1][1]])
+    output_table.append([int(len(feature_of_input))] + this_feature_name.tolist() + [int(train_corrcoef[-1][0])] + train_corrcoef[-1][1:].tolist() + val_corrcoef[-1][1:].tolist() + test_corrcoef[-1][1:].tolist())
     del train_corrcoef # Manual garbage collection
     del val_corrcoef
     del test_corrcoef
