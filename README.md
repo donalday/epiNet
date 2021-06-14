@@ -10,6 +10,14 @@ epiNet is a convolutional neural network (CNN)-based regression model to predict
 * Outputs of training and prediction are visualization-friendly with genome browser like [IGV](http://software.broadinstitute.org/software/igv/)
 * Automatic iteration of all combinations of multiple input features
 
+## Version
+2021/06/14: version 2 available
+* Added support of GPGPU (tested on Titan RTX and CUDA 10.2)
+* Added support of non-mouse genomes for IGV visulization
+* Fixed a bug to leave temporary files of unsuccessful learning trials (those with a number of training cycle equals to stop point + 1)
+
+2020/10/20: version 1 available
+
 ## Installation
 
 epiNet is written in python and is executed from the command line. The package is installation-free. Just download the script-test-package folder. The folder contains both scripts and test run data. Perform the test run according the documentation and modify for your own research/usage.
