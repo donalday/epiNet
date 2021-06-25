@@ -40,7 +40,8 @@ epiNet was written by Donald, Wan Kin Au Yeung at [Division of Epigenomics and D
 
 ## Citation
 
-Au Yeung et al., in preparation
+Au Yeung, W.K., Maruyama, O. & Sasaki, H. A convolutional neural network-based regression model to infer the epigenetic crosstalk responsible for CG methylation patterns. BMC Bioinformatics 22, 341 (2021).
+https://pubmed.ncbi.nlm.nih.gov/34162326/
 
 ## Licences
 
