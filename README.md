@@ -1,6 +1,6 @@
 # epiNet
 
-epiNet is a convolutional neural network (CNN)-based regression model to predict CG methylation from epigenetic modifications including histone modifications. This tool includes scripts to process raw input and output datasets, and automate the training and prediction steps. It is strict forward and compatible with standard bioinformatics files.
+epiNet is a convolutional neural network-based regression model to infer the epigenetic crosstalk responsible for CG methylation patterns (including histone modifications). This tool includes scripts to process raw input and output datasets, and automate the training and prediction steps. It is strict forward and compatible with standard bioinformatics files.
 
 ## Main features of epiNet
 
